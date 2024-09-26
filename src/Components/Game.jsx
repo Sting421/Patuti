@@ -33,7 +33,7 @@ const Game = () => {
     jump: [jump1, jump2, jump3, jump4, jump5],
   };
   
-
+  const [score, updateScore] = useState(0); 
   const [leftIndex, setLeftIndex] = useState(1); 
   const [rightIndex, setRightIndex] = useState(1);
   const [jumpIndex, setJumpIndex] = useState(1); 
@@ -126,6 +126,9 @@ const Game = () => {
   };
 
   const checkCollision = (bullet) => {
+    if(hp > 0){
+      updateScore((prev) => prev + 1);
+    }
     const character = {
       x: characterPosition.x,
       y: characterPosition.y,
@@ -141,6 +144,7 @@ const Game = () => {
   };
 
   useEffect(() => {
+    if(hp > 0){
     const moveBullets = () => {
       setBullets((prevBullets) =>
         prevBullets
@@ -161,6 +165,9 @@ const Game = () => {
           if (hit) {
             setHp((prevHp) => prevHp - 20); // Decrease HP by 20 if hit
           }
+        
+          
+        
           return !hit; // Remove the bullet if it hits
         })
       );
@@ -174,7 +181,7 @@ const Game = () => {
     }, 16);
 
     return () => clearInterval(gameLoop);
-  }, [characterPosition]); // Changed dependency to characterPosition
+  }}, [characterPosition, hp]); // Added hp to dependencies
 
   return (
     <div
@@ -217,7 +224,13 @@ const Game = () => {
         <Bullet key={bullet.id} position={bullet} />
       ))}
       
-      <div style={{ position: "absolute", top: 200, left: 100, color: "white" , fontSize: "48px"}}>HP: {hp}</div>
+      <div style={{ position: "absolute", top: 80, left: 1100, width: '350px', height: '50px', backgroundColor: 'white', borderRadius: '5px' }}>
+        <div style={{ width: `${hp}%`, height: '100%', backgroundColor: 'red', borderRadius: '5px' }} />
+      </div>
+
+      <div style={{ position: "absolute", top: 70, left: 1460, color: "white" , fontSize: "48px"}}>HP: {hp}</div>
+
+      <div style={{ position: "absolute", top: 70, left: 760, color: "white" , fontSize: "48px"}}>Score: {score}</div>
     </div>
   ); 
 };
