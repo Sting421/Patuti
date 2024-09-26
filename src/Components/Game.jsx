@@ -3,7 +3,7 @@ import Bullet from "./Bullet";
 import Character from "./Character";
 
 
-const Game = () => {
+const Game = () => {  
   const [hp, setHp] = useState(100);
   const [bullets, setBullets] = useState([]);
   const [characterPosition, setCharacterPosition] = useState({
@@ -20,23 +20,37 @@ const Game = () => {
         speedX: Math.random() * 3 + 2,
         speedY: Math.random() * 2 - 1,
       };
+
       setBullets((prevBullets) => [...prevBullets, newBullet]);
     }, 2000); // Add a bullet every 2 seconds
 
     return () => clearInterval(interval);
   }, []);
+  
 
   const handleKeyPress = (event) => {
-    if (event.key === "ArrowRight") {
-      setCharacterPosition((prev) => ({
-        ...prev,
-        x: Math.min(prev.x + 20, window.innerWidth - 50),
-      }));
+    if(hp > 0){
+    if (event.key === "ArrowRight" ) {
+      setCharacterPosition((prev) => {
+        // Check if the position is less than 100 before updating
+        if (prev.x < 1480) {
+          return {
+            ...prev,
+            x: Math.min(prev.x + 20, window.innerWidth - 50),
+          };
+        }
+        return prev; // Return unchanged state if condition is not met
+      });
     } else if (event.key === "ArrowLeft") {
-      setCharacterPosition((prev) => ({
-        ...prev,
-        x: Math.max(prev.x - 20, 0),
-      }));
+      setCharacterPosition((prev) => {
+        if (prev.x > 970) {
+          return {
+            ...prev,
+            x: Math.min(prev.x - 20, window.innerWidth - 50),
+          };
+        }
+        return prev;
+      });
     } else if (event.key === "ArrowUp") {
       setCharacterPosition((prev) => ({
         ...prev,
@@ -48,6 +62,7 @@ const Game = () => {
         y: Math.min(prev.y + 50, window.innerHeight - 100),
       }));
     }
+  }
   };
 
   const checkCollision = (bullet) => {
@@ -76,6 +91,7 @@ const Game = () => {
           }))
           .filter((bullet) => bullet.x > -20)
       );
+    
     };
 
     const collisionDetection = () => {
@@ -91,8 +107,10 @@ const Game = () => {
     };
 
     const gameLoop = setInterval(() => {
+      if(hp > 1){
       moveBullets();
       collisionDetection();
+    }
     }, 16);
 
     return () => clearInterval(gameLoop);
@@ -106,17 +124,40 @@ const Game = () => {
         position: "relative", 
         width: "100vw", 
         height: "100vh", 
-        backgroundImage: "url('assets/res/bg.png')", // {{ edit_1 }}
-        backgroundSize: "cover", // {{ edit_2 }}
-        backgroundPosition: "center", // {{ edit_3 }}
+        backgroundImage: "url('src/assets/res/background.png')", 
+        backgroundSize: "cover", 
+        backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
       }}
     >
+      
+      
+      
+      {hp <= 0 && ( // Game Over condition
+        <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", color: "red", fontSize: "48px" }}>
+          Game Over
+        </div>
+      )}
+      <div
+      tabIndex="0"
+      onKeyDown={handleKeyPress}
+      style={{ 
+        position: "relative", 
+        width: "100vw", 
+        height: "100vh", 
+        backgroundImage: "url('src/assets/res/area.png')", 
+        paddingTop: "320px",
+        backgroundPosition: "center center", 
+        backgroundRepeat: "no-repeat",
+      }}
+     ></div>
+      
       <Character position={characterPosition} />
       {bullets.map((bullet) => (
         <Bullet key={bullet.id} position={bullet} />
       ))}
-      <div style={{ position: "absolute", top: 700, left: 1300, color: "white" }}>HP: {hp}</div>
+      
+      <div style={{ position: "absolute", top: 200, left: 1100, color: "white" , fontSize: "48px"}}>HP: {hp}</div>
     </div>
   ); 
 };
