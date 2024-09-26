@@ -51,17 +51,68 @@ const Game = () => {
         }
         return prev;
       });
-    } else if (event.key === "ArrowUp") {
-      setCharacterPosition((prev) => ({
-        ...prev,
-        y: Math.max(prev.y - 50, 0),
-      }));
-    } else if (event.key === "ArrowDown") {
-      setCharacterPosition((prev) => ({
-        ...prev,
-        y: Math.min(prev.y + 50, window.innerHeight - 100),
-      }));
+    } 
+    // else if (event.key === "ArrowUp") {
+    //   let gravity = 2;
+    //   let jumpSpeed = 20;
+    //   let jumpInterval = setInterval(() => {
+    //     jumpSpeed -= gravity;
+    //     setCharacterPosition((prev) => ({
+    //       ...prev,
+    //       y: Math.max(prev.y - jumpSpeed, 0),
+    //     }));
+    //     if (jumpSpeed <= 0) {
+    //       clearInterval(jumpInterval);
+    //       y: Math.min(prev.y + jumpSpeed, window.innerHeight - 100)
+    //     }
+    //   }, 1000 / 60);
+    // } 
+    else if (event.key === "ArrowUp") {
+  let gravity = 2;
+  let jumpSpeed = 20;
+  let isJumping = true;
+
+  const jumpInterval = setInterval(() => {
+    jumpSpeed -= gravity;
+
+    setCharacterPosition((prev) => ({
+      ...prev,
+      y: Math.max(prev.y - jumpSpeed, 0),
+    }));
+
+    // When jump speed reaches 0 or below, start falling
+    if (jumpSpeed <= 0 && isJumping) {
+      isJumping = false;
+      // Start falling down
+      const fallInterval = setInterval(() => {
+        jumpSpeed += gravity;
+        setCharacterPosition((prev) => ({
+          ...prev,
+          y: Math.min(prev.y + jumpSpeed, 540), // Limit the character's fall to y = 540
+        }));
+
+        if (prev.y >= 540) {
+          clearInterval(fallInterval); // Stop falling when the character reaches y = 540
+        }
+      }, 1000 / 60);
+      clearInterval(jumpInterval); // Stop the jumping interval
     }
+  }, 1000 / 60);
+}
+
+    else if (event.key === "ArrowDown") {
+      setCharacterPosition((prev) => {
+        if (prev.y < 540) {
+          return {
+            ...prev,
+            y: Math.min(prev.y + 50, window.innerHeight  - 100),
+          };
+        }
+        return prev;
+      });
+    }
+    
+  
   }
   };
 
@@ -157,7 +208,7 @@ const Game = () => {
         <Bullet key={bullet.id} position={bullet} />
       ))}
       
-      <div style={{ position: "absolute", top: 200, left: 1100, color: "white" , fontSize: "48px"}}>HP: {hp}</div>
+      <div style={{ position: "absolute", top: 200, left: 100, color: "white" , fontSize: "48px"}}>HP: {hp}</div>
     </div>
   ); 
 };
