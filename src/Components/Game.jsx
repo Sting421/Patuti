@@ -51,55 +51,21 @@ const Game = () => {
         }
         return prev;
       });
-    } 
-    // else if (event.key === "ArrowUp") {
-    //   let gravity = 2;
-    //   let jumpSpeed = 20;
-    //   let jumpInterval = setInterval(() => {
-    //     jumpSpeed -= gravity;
-    //     setCharacterPosition((prev) => ({
-    //       ...prev,
-    //       y: Math.max(prev.y - jumpSpeed, 0),
-    //     }));
-    //     if (jumpSpeed <= 0) {
-    //       clearInterval(jumpInterval);
-    //       y: Math.min(prev.y + jumpSpeed, window.innerHeight - 100)
-    //     }
-    //   }, 1000 / 60);
-    // } 
-    else if (event.key === "ArrowUp") {
-  let gravity = 2;
-  let jumpSpeed = 20;
-  let isJumping = true;
-
-  const jumpInterval = setInterval(() => {
-    jumpSpeed -= gravity;
-
-    setCharacterPosition((prev) => ({
-      ...prev,
-      y: Math.max(prev.y - jumpSpeed, 0),
-    }));
-
-    // When jump speed reaches 0 or below, start falling
-    if (jumpSpeed <= 0 && isJumping) {
-      isJumping = false;
-      // Start falling down
-      const fallInterval = setInterval(() => {
-        jumpSpeed += gravity;
+    } else if (event.key === "ArrowUp") {
+      let gravity = 2;
+      let jumpSpeed = 30;
+      let jumpInterval = setInterval(() => {
+        jumpSpeed -= gravity;
         setCharacterPosition((prev) => ({
           ...prev,
-          y: Math.min(prev.y + jumpSpeed, 540), // Limit the character's fall to y = 540
+          y: Math.max(prev.y - jumpSpeed, 0),
         }));
-
-        if (prev.y >= 540) {
-          clearInterval(fallInterval); // Stop falling when the character reaches y = 540
+        if (jumpSpeed <= 0) {
+          clearInterval(jumpInterval);
+          
         }
       }, 1000 / 60);
-      clearInterval(jumpInterval); // Stop the jumping interval
-    }
-  }, 1000 / 60);
-}
-
+    } 
     else if (event.key === "ArrowDown") {
       setCharacterPosition((prev) => {
         if (prev.y < 540) {
